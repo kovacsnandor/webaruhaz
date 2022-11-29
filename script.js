@@ -250,8 +250,6 @@ function cardBoxView(){
     document.getElementById("cart-box").classList.remove("d-none");
 
 }
-
-
     
 
 //Read: product lista
@@ -393,28 +391,46 @@ function intoCart(id){
 function updateProduct(id){
     state.event = "update"
     state.currentId = id;
-    //kerüljenek bele az űrlapba a kártya datai
-    let index = searchIndex(id);
-    //beolvassuk az űrlapba
-    let name = state.products[index].name
-    let price = state.products[index].price
-    let isInStock = state.products[index].isInStock
-    document.getElementById("name").value = name;
-    document.getElementById("price").value = price;
-    document.getElementById("isInStock").checked = isInStock;
+    // //kerüljenek bele az űrlapba a kártya datai
+    // let index = searchIndex(id);
+    // //beolvassuk az űrlapba
+    // let name = state.products[index].name
+    // let price = state.products[index].price
+    // let isInStock = state.products[index].isInStock
 
-    document.getElementById("title-update").classList.remove("d-none");
-    document.getElementById("title-new").classList.add("d-none");
+    let url = `${state.url}/${id}`;
+    fetch(url)
+    .then((response) => response.json())
+    .then((data)=>{
+        console.log(data);
+        document.getElementById("name").value = data.name;
+        document.getElementById("price").value = data.price;
+        document.getElementById("isInStock").checked = data.isInStock;
+    
+        document.getElementById("title-update").classList.remove("d-none");
+        document.getElementById("title-new").classList.add("d-none");
+    
+        formView();
+        // console.log(id);
+    })
+    .catch((error)=>{console.log(error);})
 
-    formView();
-    console.log(id);
 }
 
 //Delete: Töröl gomb függvénye
 function deleteProduct(id){
     state.event = "delete";
-    let index = searchIndex(id)
-    state.products.splice(index,1);
+    // let index = searchIndex(id)
+    // state.products.splice(index,1);
+    let url = `${state.url}/${id}`;
+    console.log(url);
+    fetch(url,{
+        method: "delete"
+    })
+    .then((response) => response.json())
+    .then((data) => {
+        console.log(data);
+    })
     renderProducts()
 }
 
