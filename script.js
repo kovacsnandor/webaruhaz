@@ -45,7 +45,10 @@ state = {
     cart: [],
 
     event: "read", //milyen állapotban van: read, delete, update, create
-    currentId: null //Update esetén itt tároljuk a módosítandó product id-jét
+    currentId: null, //Update esetén itt tároljuk a módosítandó product id-jét,
+
+    url: "http://localhost:3000/products"
+
 }
 
 //#region Segéd függvények
@@ -254,62 +257,73 @@ function cardBoxView(){
 //Read: product lista
 function renderProducts(){
     state.event = "read";
-    let prodctsHtml = "";
-    
-    state.products.forEach(product => {
-        prodctsHtml += `
-        <div class="col">
-            <div class="card ${product.quantity > 0 ? "" : "bg-warning"}">
-                <div class="card-body">
-                    <h5 class="card-title">${product.name}</h5>
-                    <p class="card-text">Termék ár: ${product.price} Ft</p>
-                    <p class="card-text">Raktáron: ${product.quantity} db</p>
-                </div>
-
-                <div class="d-flex flex-row m-2">
-
-                    <!-- Törlés -->
-                    <button type="button" 
-                        class="btn btn-danger btn-sm"
-                        onclick="deleteProduct('${product.id}')"
-                    >
-                        Törlés
-                    </button>
-
-                    <!-- Módosítás -->
-                    <button type="button" 
-                        class="btn btn-success btn-sm ms-2"
-                        onclick="updateProduct('${product.id}')"
-                    >
-                        Módosít
-                    </button>
-                </div>
-
-                <div class="d-flex flex-row m-2">
-                    <!-- Kosárba rakás -->
-                    <button type="button" 
-                        class="btn btn-outline-success col-4"
-                        onclick="intoCart('${product.id}')"
-                    >
-                        <i class="bi bi-cart-plus"></i>
-                    </button>
-                    
-                    <!-- Mennyit rakok a kosárba -->
-                    <input
-                        type="number"
-                        class="form-control ms-2"
-                        id="${product.id}"
-                        value="1"
-                        min="1"
-                        max="${product.quantity}"
-                        onchange="quantityInputCheck('${product.id}')"
-                    />
-                </div>
-            </div>
-        </div>`;
+    fetch(state.url)
+    .then((response)=>response.json())
+    .then((data) => {
+        console.log(data);
+        state.products = data
+        let prodctsHtml = "";
         
+        state.products.forEach(product => {
+            prodctsHtml += `
+            <div class="col">
+                <div class="card ${product.quantity > 0 ? "" : "bg-warning"}">
+                    <div class="card-body">
+                        <h5 class="card-title">${product.name}</h5>
+                        <p class="card-text">Termék ár: ${product.price} Ft</p>
+                        <p class="card-text">Raktáron: ${product.quantity} db</p>
+                    </div>
+    
+                    <div class="d-flex flex-row m-2">
+    
+                        <!-- Törlés -->
+                        <button type="button" 
+                            class="btn btn-danger btn-sm"
+                            onclick="deleteProduct('${product.id}')"
+                        >
+                            Törlés
+                        </button>
+    
+                        <!-- Módosítás -->
+                        <button type="button" 
+                            class="btn btn-success btn-sm ms-2"
+                            onclick="updateProduct('${product.id}')"
+                        >
+                            Módosít
+                        </button>
+                    </div>
+    
+                    <div class="d-flex flex-row m-2">
+                        <!-- Kosárba rakás -->
+                        <button type="button" 
+                            class="btn btn-outline-success col-4"
+                            onclick="intoCart('${product.id}')"
+                        >
+                            <i class="bi bi-cart-plus"></i>
+                        </button>
+                        
+                        <!-- Mennyit rakok a kosárba -->
+                        <input
+                            type="number"
+                            class="form-control ms-2"
+                            id="${product.id}"
+                            value="1"
+                            min="1"
+                            max="${product.quantity}"
+                            onchange="quantityInputCheck('${product.id}')"
+                        />
+                    </div>
+                </div>
+            </div>`;
+            
+        });
+        document.getElementById("product-list").innerHTML = prodctsHtml;
+    })
+    .catch(() => {
+        let prodctsHtml = "Szerver hiba"
+        document.getElementById("product-list").innerHTML = prodctsHtml;
     });
-    document.getElementById("product-list").innerHTML = prodctsHtml;
+
 }
 
 function quantityInputCheck(id){

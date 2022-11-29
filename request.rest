@@ -1,0 +1,32 @@
+### get products
+get http://localhost:3000/products
+
+### get product (
+get http://localhost:3000/products/lb2pbp25z7euh5olwlo
+
+### add product
+post http://localhost:3000/products
+Content-Type: application/json
+
+ {
+    "id": "1_lb2nwj9fp5esy079kel",
+    "name": "Áru 4",
+    "price": 4500,
+    "quantity": 10,
+    "isInStock": true
+  }
+
+### delete product
+delete http://localhost:3000/products/1_lb2nwj9fp5esy079kel
+
+### product módosítás
+put http://localhost:3000/products/1_lb2nwj9fp5esy079kel
+Content-Type: application/json
+
+ {
+    "id": "1_lb2nwj9fp5esy079kel",
+    "name": "Áru 5",
+    "price": 5500,
+    "quantity": 100,
+    "isInStock": false
+  }
